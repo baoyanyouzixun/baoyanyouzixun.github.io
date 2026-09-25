@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026九推捡漏 · 还能报的口子（实时）</title>
+<style>
+:root{--blue:#2b5cff;--red:#e53935;--ink:#1c2333;--bg:#f5f7fb;--line:#e6e9f2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:70px}
+.hd{background:linear-gradient(135deg,#2b5cff 0%,#1a3fd0 100%);color:#fff;padding:26px 18px 20px}
+.hd h1{font-size:22px;letter-spacing:1px}
+.hd p{font-size:12.5px;opacity:.85;margin-top:6px;line-height:1.7}
+.stats{display:flex;gap:10px;margin-top:14px}
+.stats div{flex:1;background:rgba(255,255,255,.14);border-radius:10px;padding:10px 6px;text-align:center}
+.stats b{display:block;font-size:22px}
+.stats span{font-size:11px;opacity:.85}
+.bar{position:sticky;top:0;background:#fff;border-bottom:1px solid var(--line);padding:10px 12px;z-index:9}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;border:1px solid var(--line);border-radius:16px;padding:5px 13px;font-size:13px;color:#454f63;background:#fff;cursor:pointer}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.search{margin-top:8px;display:flex;gap:8px}
+.search input{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:14px;outline:none}
+.search input:focus{border-color:var(--blue)}
+#today{border:1px solid var(--line);background:#fff;border-radius:9px;padding:8px 10px;font-size:13px;color:var(--red);cursor:pointer;white-space:nowrap}
+#today.on{background:#fff1f0;border-color:var(--red)}
+.list{max-width:860px;margin:0 auto;padding:12px 12px 0}
+.card{background:#fff;border-radius:12px;padding:14px 16px;margin-bottom:10px;border:1px solid var(--line);box-shadow:0 1px 3px rgba(28,35,51,.04)}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.sch{font-size:16.5px;font-weight:700}
+.col{font-size:12.5px;color:#6b7490;margin-top:2px}
+.proj{font-size:13.5px;color:#2c3446;margin:8px 0 10px;line-height:1.55}
+.deadline{font-size:13px;font-weight:600;color:#b8860b}
+.deadline.hot{color:var(--red)}
+.left{font-size:11px;font-weight:400;opacity:.8;margin-left:4px}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#8a92a8}
+.meta a{color:var(--blue);text-decoration:none;font-weight:600}
+.tag{flex:0 0 auto;font-size:11px;border:1px solid var(--blue);color:var(--blue);border-radius:5px;padding:1px 7px;margin-top:3px;white-space:nowrap}
+.foot{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:10px 14px;text-align:center;font-size:12.5px;color:#454f63}
+.foot b{color:var(--blue)}
+.none{text-align:center;color:#8a92a8;padding:40px 0;font-size:14px}
+#gate{position:fixed;inset:0;background:linear-gradient(135deg,#2b5cff 0%,#1a3fd0 100%);z-index:99;display:flex;align-items:center;justify-content:center;padding:20px}
+#gate .box{background:#fff;border-radius:16px;padding:28px 24px;max-width:380px;width:100%;text-align:center}
+#gate h2{font-size:19px;margin-bottom:8px}
+#gate .tip{font-size:13px;color:#6b7490;line-height:1.8;margin-bottom:16px}
+#gate input{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:12px;font-size:17px;text-align:center;letter-spacing:3px;outline:none;text-transform:uppercase}
+#gate input:focus{border-color:var(--blue)}
+#gate button{width:100%;margin-top:12px;background:var(--blue);color:#fff;border:none;border-radius:10px;padding:12px;font-size:16px;font-weight:600;cursor:pointer}
+#gate .err{color:var(--red);font-size:12.5px;margin-top:10px;min-height:16px}
+#gate .where{font-size:12px;color:#8a92a8;margin-top:14px;line-height:1.7}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="box">
+    <h2>九推捡漏表 · 群内专属</h2>
+    <div class="tip">本表每天更新，仅对粉丝群同学开放<br>口令在今天的群公告 / 群欢迎语里</div>
+    <input id="pc" placeholder="输入今日口令" maxlength="8" autocomplete="off">
+    <button onclick="unlock()">开 门</button>
+    <div class="err" id="err"></div>
+    <div class="where">还没有口令？关注主播 → 主页进粉丝群 → 群公告自取<br>口令每天 0 点更换</div>
+  </div>
+</div>
+<div class="hd">
+  <h1>2026 九推捡漏 · 还能报的口子</h1>
+  <p>已帮大家筛掉：已过截止的 / 无法确认还在开放的<br>每条均已点开各校官方通知逐条核验（学校、截止时间以官方原文为准）<br>数据源：保研友数据中心整理自高校官网</p>
+  <div class="stats"><div><b>56</b><span>仍可报机会</span></div><div><b>40</b><span>所学校</span></div><div><b>2</b><span>48小时内截止</span></div></div>
+</div>
+<div class="bar">
+  <div class="chips" id="chips"></div>
+  <div class="search"><input id="q" placeholder="搜学校 / 学院 / 项目关键词…"><button id="today">只看急的</button></div>
+</div>
+<div class="list" id="list"></div>
+<div class="foot">整理：<b>导毕教育 · 保研友</b> ｜ 评论区回复「捡漏」领取一对一捡漏定位</div>
+<script>
+const DATA = [{"sch": "华北电力大学", "col": "", "proj": "核科学与工程学院", "sub": "理工", "start": "", "dl": "2026-09-25 23:59", "ts": 1790351940000, "url": "https://snse.ncepu.edu.cn/tztg/ee8e1683e13347bb8f655b86e31e30fd.htm"}, {"sch": "中国政法大学", "col": "海南国际学院", "proj": "2026年中国政法大学海南国际学院2027年继续接收推免生工作的通知", "sub": "法学", "start": "", "dl": "2026-09-25 23:59", "ts": 1790351940000, "url": "https://mp.weixin.qq.com/s/OYQBUdJbAhik2dAP5CLZQQ"}, {"sch": "华北电力大学", "col": "", "proj": "能源电力创新研究院", "sub": "理工", "start": "", "dl": "2026-09-27 23:59", "ts": 1790524740000, "url": "https://iepi.ncepu.edu.cn/tzgg/547416c92feb4d03b6f95e29f2e4c943.htm"}, {"sch": "南方科技大学", "col": "", "proj": "2026年南方科技大学商学院025100金融专业招收2027级推荐免试研究生（第二批）报名通知", "sub": "经管", "start": "", "dl": "2026-09-27 23:59", "ts": 1790524740000, "url": "https://mp.weixin.qq.com/s/i0WQ2q9xUEchrncZ2hIVdA"}, {"sch": "成都中医药大学", "col": "马克思主义学院", "proj": "成都中医药大学马克思主义学院2027年接收推荐免试研究生工作实施细则_公告公示_马克思主义学院", "sub": "人文", "start": "", "dl": "2026-09-28 17:00", "ts": 1790586000000, "url": "https://zyd.cdutcm.edu.cn/mkszyxyrwskxy/gggs/content_143150"}, {"sch": "中南民族大学", "col": "", "proj": "电子信息工程学院（机器人学院）2027年接收 推荐免试研究生实施细则-电子信息工程学院", "sub": "理工", "start": "", "dl": "2026-09-28 23:59", "ts": 1790611140000, "url": "https://dxxy.scuec.edu.cn/info/1015/3446.htm"}, {"sch": "深圳大学", "col": "机电与控制工程学院", "proj": "深圳大学机电与控制工程学院2027年“直博生”招生工作实施细则-深圳大学机电与控制工程学院", "sub": "理工", "start": "", "dl": "2026-09-30 23:59", "ts": 1790783940000, "url": "https://cmce.szu.edu.cn/info/1016/11065.htm"}, {"sch": "山西大学", "col": "", "proj": "山西大学研究生招生网", "sub": "单校", "start": "", "dl": "2026-09-30 23:59", "ts": 1790783940000, "url": "https://yjszsw.sxu.edu.cn/sszs/67a53c041d28470ba4e2e2fddf0a38f0.htm"}, {"sch": "中国地质大学（北京）", "col": "", "proj": "2026年中国地质大学（北京） 2027年接收优秀应届本科毕业生推荐免试攻读研究生（含直博生）及复试录取工作方案", "sub": "单校", "start": "", "dl": "2026-10-01 23:59", "ts": 1790870340000, "url": "https://bm.cugb.edu.cn/yjsyzsb/c/2026-09-03/856199.shtml"}, {"sch": "河北大学", "col": "新闻传播学院", "proj": "新闻传播学院2027年接收优秀应届本科毕业生免试攻读硕士研究生（含直博生）工作实施细则-河北大学新闻传播学院", "sub": "人文", "start": "", "dl": "2026-10-01 23:59", "ts": 1790870340000, "url": "https://jc.hbu.edu.cn/info/1057/3859.htm"}, {"sch": "贵州中医药大学", "col": "", "proj": "贵州中医药大学2027年接收推荐优秀应届本科毕业生免试攻读硕士研究生办法-党委研究生工作部", "sub": "医学", "start": "", "dl": "2026-10-01 23:59", "ts": 1790870340000, "url": "https://yjs.gzy.edu.cn/info/2034/2771.htm"}, {"sch": "三峡大学", "col": "", "proj": "三峡大学接收2027级推免生（含直博生）复试录取工作方案-三峡大学研究生院湖北省卓越工程师学院", "sub": "单校", "start": "", "dl": "2026-10-01 23:59", "ts": 1790870340000, "url": "https://sxdxyjsy.ctgu.edu.cn/info/1075/20493.htm"}, {"sch": "杭州师范大学", "col": "经济学院", "proj": "杭州师范大学经济学院", "sub": "经管", "start": "", "dl": "2026-10-08 23:59", "ts": 1791475140000, "url": "https://jjxy.hznu.edu.cn/c/2026-09-20/3217705.shtml"}, {"sch": "贵州大学", "col": "", "proj": "资源与环境工程学院2027年接收优秀应届本科毕业生免试攻读硕士学位工作实施细则", "sub": "理工", "start": "", "dl": "2026-10-08 23:59", "ts": 1791475140000, "url": "https://re.gzu.edu.cn/2026/0920/c4688a279659/page.htm"}, {"sch": "武汉大学", "col": "传统文化研究中心", "proj": "中国传统文化研究中心2027年接收推免生工作实施方案-武汉大学传统文化研究中心", "sub": "人文", "start": "", "dl": "2026-10-09 23:59", "ts": 1791561540000, "url": "https://ric.whu.edu.cn/info/1052/9631.htm"}, {"sch": "江西农业大学", "col": "", "proj": "江西农业大学2027年接收推荐免试攻读研究生工作办法-研究生招生网", "sub": "单校", "start": "", "dl": "2026-10-10 23:59", "ts": 1791647940000, "url": "https://yzb.jxau.edu.cn/info/1111/4351.htm"}, {"sch": "贵州民族大学", "col": "", "proj": "贵州民族大学文学院2027年接收推荐免试攻读 硕士研究生复试录取实施细则_通知公告_文学院", "sub": "人文", "start": "", "dl": "2026-10-12 14:00", "ts": 1791784800000, "url": "https://wxb.gzmu.edu.cn/tzgg/content_87676"}, {"sch": "河南工业大学", "col": "", "proj": "设计艺术学院2027年推荐免试硕士研究生复试工作安排-设计艺术学院-河南工业大学", "sub": "设计", "start": "", "dl": "2026-10-12 23:59", "ts": 1791820740000, "url": "https://design.haut.edu.cn/info/1048/18977.htm"}, {"sch": "青海师范大学", "col": "", "proj": "青海师范大学2027年接收优秀应届本科毕业生免试攻读研究生（含直博生）招生简章-青海师范大学--研究生院", "sub": "单校", "start": "", "dl": "2026-10-13 00:00", "ts": 1791820800000, "url": "https://yjsb.qhnu.edu.cn/info/1059/2902.htm"}, {"sch": "天津师范大学", "col": "", "proj": "天津师范大学法学院2027年推免生招生录取工作实施细则-天津师范大学-法学院", "sub": "法学", "start": "", "dl": "2026-10-13 23:59", "ts": 1791907140000, "url": "https://fxy.tjnu.edu.cn/info/1144/4689.htm"}, {"sch": "天津师范大学", "col": "-新闻传播学院", "proj": "新闻传播学院2027年推免生（含直博生）招生录取工作实施细则-天津师范大学-新闻传播学院", "sub": "人文", "start": "", "dl": "2026-10-13 23:59", "ts": 1791907140000, "url": "https://xwcb.tjnu.edu.cn/info/1018/5725.htm"}, {"sch": "天津师范大学", "col": "美术与设计学院", "proj": "天津师范大学美术与设计学院 2027年推免生招生录取工作实施细则-天津师范大学-美术与设计学院", "sub": "设计", "start": "", "dl": "2026-10-13 23:59", "ts": 1791907140000, "url": "https://msysj.tjnu.edu.cn/info/1020/4289.htm"}, {"sch": "天津师范大学", "col": "电子与通信工程学院", "proj": "天津师范大学电子与通信工程学院、人工智能学院 2027年推免生招生录取工作实施细则-电子与通信工程学院", "sub": "理工", "start": "", "dl": "2026-10-13 23:59", "ts": 1791907140000, "url": "https://dzytx.tjnu.edu.cn/info/1148/5326.htm"}, {"sch": "天津师范大学", "col": "计算机与信息工程学院", "proj": "天津师范大学计算机与信息工程学院2027年推免生招生录取工作实施细则-计算机与信息工程学院", "sub": "理工", "start": "", "dl": "2026-10-13 23:59", "ts": 1791907140000, "url": "https://xxgc.tjnu.edu.cn/info/1013/4216.htm"}, {"sch": "杭州师范大学", "col": "", "proj": "外国语学院2027年接收推荐免试研究生工作办法", "sub": "人文", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://wgyxy.hznu.edu.cn/c/2026-09-18/3217714.shtml"}, {"sch": "吉林大学", "col": "", "proj": "吉林大学2027年接收优秀应届本科毕业生免试攻读研究生招生简章及专业目录-吉林大学研究生招生信息网", "sub": "单校", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://yzb.jlu.edu.cn/info/1047/3637.htm?sessionid="}, {"sch": "青岛大学", "col": "口腔医学院", "proj": "青岛大学口腔医学院接收2027年推荐免试攻读硕士研究生的通知-青岛大学口腔医学院", "sub": "医学", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://dent.qdu.edu.cn/info/1055/2159.htm"}, {"sch": "东北农业大学", "col": "", "proj": "水利科学与工程学院2027年接收推免生工作办法-水利学院", "sub": "理工", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://slxy.neau.edu.cn/info/1164/8230.htm"}, {"sch": "东北农业大学", "col": "", "proj": "东北农业大学2027年接收推荐免试研究生章程-东北农业大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://graduate.neau.edu.cn/info/1146/4554.htm"}, {"sch": "山西师范大学", "col": "", "proj": "关于接收2027年优秀应届本科毕业生免试攻读硕士学位研究生工作的通知", "sub": "单校", "start": "", "dl": "2026-10-15 23:59", "ts": 1792079940000, "url": "https://grc.sxnu.edu.cn/info/1087/11834.htm"}, {"sch": "宁波大学", "col": "", "proj": "宁波大学2027年接收推荐免试研究生（含直博生）章程-宁波大学研究生院/研究生工作部/学科建设处", "sub": "单校", "start": "", "dl": "2026-10-16 23:59", "ts": 1792166340000, "url": "https://graduate.nbu.edu.cn/info/1073/29201.htm"}, {"sch": "石河子大学", "col": "文学艺术学院", "proj": "石河子大学文学艺术学院（新闻传播学院）推免招生综合考核实施细则", "sub": "人文", "start": "", "dl": "2026-10-16 23:59", "ts": 1792166340000, "url": "https://art.shzu.edu.cn/2026/0911/c2466a235769/page.htm"}, {"sch": "石河子大学", "col": "", "proj": "化学化工学院2027年推免招生综合考核实施细则", "sub": "理工", "start": "", "dl": "2026-10-16 23:59", "ts": 1792166340000, "url": "https://hgxy.shzu.edu.cn/2026/0911/c11730a235779/page.htm"}, {"sch": "四川农业大学", "col": "土木工程学院", "proj": "2026年四川农业大学土木工程学院接收推免研究生工作的通知", "sub": "理工", "start": "", "dl": "2026-10-17 23:59", "ts": 1792252740000, "url": "https://tmgcxy.sicau.edu.cn/info/1046/10844.htm"}, {"sch": "四川农业大学", "col": "食品学院", "proj": "食品学院关于2027年接收推免研究生工作的通知-四川农业大学 食品学院", "sub": "理工", "start": "", "dl": "2026-10-17 23:59", "ts": 1792252740000, "url": "https://spxy.sicau.edu.cn/info/1461/150651.htm"}, {"sch": "辽宁师范大学", "col": "", "proj": "文学院2027年接收推荐免试研究生（含直博生） 工作实施细则-辽宁师范大学文学院", "sub": "人文", "start": "", "dl": "2026-10-18 12:00", "ts": 1792296000000, "url": "https://wxy.lnnu.edu.cn/info/1007/2985.htm"}, {"sch": "杭州师范大学", "col": "临床医学院", "proj": "杭州师范大学临床医学院口腔医学院", "sub": "医学", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://lcyxy.hznu.edu.cn/c/2026-09-18/3217712.shtml"}, {"sch": "杭州师范大学", "col": "临床医学院", "proj": "杭州师范大学临床医学院口腔医学院", "sub": "医学", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://lcyxy.hznu.edu.cn/c/2026-09-20/3217844.shtml"}, {"sch": "上海师范大学", "col": "", "proj": "【推免招生】上海师范大学2027年接收推荐免试攻读硕士学位研究生招生工作办法", "sub": "单校", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://yjsc.shnu.edu.cn/13/3c/c17243a856892/page.htm"}, {"sch": "河北大学", "col": "-中央兰开夏传媒与创意学院", "proj": "河北大学-中央兰开夏传媒与创意学院2027年接收优秀应届本科毕业生免试攻读研究生实施细则-中央兰开夏传媒与创意学院", "sub": "人文", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://uclan.hbu.cn/info/1039/2398.htm"}, {"sch": "西安外国语大学", "col": "", "proj": "西安外国语大学2027年接收推荐免试研究生（含直博生）招生简章-西安外国语大学研究生招生信息网", "sub": "单校", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://yzw.xisu.edu.cn/info/1080/4782.htm"}, {"sch": "四川农业大学", "col": "园艺学院", "proj": "园艺学院关于2027年接收推免研究生工作的通知-四川农业大学园艺学院", "sub": "理工", "start": "", "dl": "2026-10-18 23:59", "ts": 1792339140000, "url": "https://yyx.sicau.edu.cn/info/1058/19883.htm"}, {"sch": "南京财经大学", "col": "", "proj": "南京财经大学2027年接收优秀应届本科毕业生免试攻读硕士研究生工作办法-南京财经大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-19 23:59", "ts": 1792425540000, "url": "https://yjsc.nufe.edu.cn/info/1011/6972.htm"}, {"sch": "宁夏大学", "col": "", "proj": "宁夏大学2027年接收优秀应届本科毕业生免试攻读研究生（含直博生）工作安排-宁夏大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://graduate.nxu.edu.cn/info/1054/8611.htm"}, {"sch": "西南大学", "col": "", "proj": "【推免】西南大学法学院2027年接收推荐免试硕士研究生复试录取工作细则-西南大学法学院", "sub": "法学", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://law.swu.edu.cn/info/1004/8053.htm"}, {"sch": "华侨大学", "col": "音乐舞蹈学院", "proj": "华侨大学音乐舞蹈学院2027年面向全国接收推免生的通知-华侨大学音乐舞蹈学院", "sub": "人文", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://mdc.hqu.edu.cn/info/1030/17300.htm"}, {"sch": "内蒙古科技大学", "col": "", "proj": "内蒙古科技大学2027年接收推荐免试研究生（含直博生）招生录取工作办法-研究生院（卓越工程师学院）_内蒙古科技大学", "sub": "单校", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://graduate.imust.edu.cn/info/1134/5555.htm"}, {"sch": "哈尔滨工程大学", "col": "", "proj": "人文社会科学学院2027年推荐免试攻读硕士学位研究生接收和复试办法", "sub": "人文", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://shss.hrbeu.edu.cn/2026/0921/c9220a352428/page.htm"}, {"sch": "黑龙江大学", "col": "", "proj": "黑龙江大学2027年推荐优秀应届本科毕业生免试攻读研究生（含直博生）复试录取工作方案-黑龙江大学研究生院", "sub": "人文", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://yjsy.hlju.edu.cn/info/1010/10262.htm"}, {"sch": "华侨大学", "col": "外国语学院", "proj": "华侨大学外国语学院2027年面向全国接收推免生工作实施细则（含直博和推免硕士）-外国语学院", "sub": "人文", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://flc.hqu.edu.cn/info/2091/42971.htm"}, {"sch": "哈尔滨工程大学", "col": "", "proj": "信息与通信工程学院/集成电路学院关于接收2027年推免生（含直博生）复试工作的通知", "sub": "理工", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://icec.hrbeu.edu.cn/2026/0923/c4658a352467/page.htm"}, {"sch": "黑龙江中医药大学", "col": "", "proj": "黑龙江中医药大学2027年接收推荐免试攻读硕士学位招生简章-黑龙江中医药大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://yjsy.hljucm.net/info/1114/8078.htm"}, {"sch": "华侨大学", "col": "", "proj": "华侨大学文学院2027年接收推荐免试攻读硕士学位研究生工作实施细则-华侨大学文学院", "sub": "人文", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://wxy.hqu.edu.cn/info/1019/14571.htm"}, {"sch": "广州大学", "col": "", "proj": "广州大学2027年接收推荐免试攻读硕士研究生招生录取工作办法-广州大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://yjsy.gzhu.edu.cn/info/1006/114391.htm"}, {"sch": "中国石油大学（北京）", "col": "人工智能学院", "proj": "人工智能院2027年接收推免生（直博生）申请办法及复试细则-通知公告-中国石油大学（北京）人工智能学院", "sub": "理工", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://www.cup.edu.cn/cupai/tzgg/c92df214f8af42a999c9b0292d8d5e3c.htm"}, {"sch": "广州中医药大学", "col": "", "proj": "广州中医药大学2027年接收推荐免试研究生章程-广州中医药大学研究生院", "sub": "单校", "start": "", "dl": "2026-10-20 23:59", "ts": 1792511940000, "url": "https://yjsy.gzucm.edu.cn/info/1004/19476.htm"}];
+const SUBS = ["理工", "经管", "人文", "法学", "医学", "设计", "单校", "其他"];
+const NOW = 1790301643430;
+const PASS_TABLE = {"2026-09-25": "2ed0353352dff1e277c1f5394c16f3d4c9021864479eaa6c889b9f05e48deca3", "2026-09-26": "1601fe7ccc71751953eb9195850e5024c27e4fdee0d7241225a037ff49d26f17", "2026-09-27": "f0de2ffc35b717735b24c1121858259934bfe97d296ae5e2e7a4ac7d41430172", "2026-09-28": "a49700403593cf5542d3b52547aede1f35987393edf6e6bd7bdbc012573e6ff4", "2026-09-29": "bd93b5018c90ddf70ea3f02376e5dae6b3b81e2e408e8b3b6d836b770c31e31f", "2026-09-30": "181c39df6bd4477a150bfeed8ebb8adccd468e1c2911c89eb886e0aa81292b88", "2026-10-01": "1777a21f3d26cb17b75194cd973e331ad24c609b8af0a94d12c494bad7c38866"};
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0")
+       + "-" + String(d.getDate()).padStart(2, "0");
+}
+async function sha256(s){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+async function unlock(){
+  const v = document.getElementById('pc').value.trim().toUpperCase();
+  if (!v) return;
+  const ph = PASS_TABLE[todayKey()];
+  if (!ph){
+    document.getElementById('err').textContent = '页面版本过旧，请刷新重进，或看群公告';
+    return;
+  }
+  const h = await sha256(v);
+  if (h === ph){
+    localStorage.setItem('jl_gate', todayKey() + ":" + h);
+    document.getElementById('gate').style.display = 'none';
+  } else {
+    document.getElementById('err').textContent = '口令不对，去群里看今天的口令（每天 0 点换）';
+  }
+}
+document.getElementById('pc').addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+if ((localStorage.getItem('jl_gate') || "").startsWith(todayKey() + ":")){
+  document.getElementById('gate').style.display = 'none';
+}
+let fSub = "全部", fToday = false;
+const chips = document.getElementById('chips');
+['全部', ...SUBS].forEach(s => {
+  const c = document.createElement('span');
+  c.className = 'chip' + (s === '全部' ? ' on' : '');
+  c.textContent = s;
+  c.onclick = () => { fSub = s; document.querySelectorAll('.chip').forEach(x => x.classList.remove('on')); c.classList.add('on'); render(); };
+  chips.appendChild(c);
+});
+document.getElementById('today').onclick = function(){ fToday = !fToday; this.classList.toggle('on'); render(); };
+document.getElementById('q').oninput = render;
+function left(ts){
+  const d = ts - NOW;
+  if (d <= 0) return '已到点，速查原文';
+  const h = Math.floor(d / 3600000);
+  return h >= 24 ? '剩 ' + Math.floor(h/24) + ' 天' : '仅剩 ' + h + ' 小时';
+}
+function render(){
+  const q = document.getElementById('q').value.trim();
+  const el = document.getElementById('list');
+  const hits = DATA.filter(x =>
+    (fSub === '全部' || x.sub === fSub) &&
+    (!fToday || x.ts - NOW < 48*3600000) &&
+    (!q || (x.sch + x.col + x.proj).includes(q)));
+  el.innerHTML = hits.length ? hits.map(x => `
+    <div class="card">
+      <div class="top"><div><div class="sch">${x.sch}</div><div class="col">${x.col || '—'}</div></div>
+      <span class="tag">${x.sub}</span></div>
+      <div class="proj">${x.proj}</div>
+      <div class="deadline${x.ts - NOW < 24*3600000 ? ' hot' : ''}">⏰ 截止 ${x.dl}<span class="left">${left(x.ts)}</span></div>
+      <div class="meta"><span>开始：${x.start || '—'}</span><a href="${x.url}" target="_blank">官方通知原文 →</a></div>
+    </div>`).join('') : '<div class="none">没有符合条件的口子，换个筛选试试</div>';
+}
+render();
+</script>
+</body>
+</html>
